@@ -1,0 +1,240 @@
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.awt.GridBagConstraints;
+import javax.swing.plaf.BorderUIResource;
+import javax.swing.BorderFactory;
+import java.awt.geom.Line2D;
+import javax.swing.JTextField;
+import java.awt.GridBagLayout;
+import java.io.*;
+
+public class Anmeldung extends Frame implements KeyListener, ActionListener
+{    
+  JPanel pHeading     = new JPanel();
+  JPanel pFehler      = new JPanel();
+  JPanel pButtons     = new JPanel();
+  
+  JButton bAnmelden   = new JButton("<html><body>Anmelden</body></html>");
+  JButton bRegistrieren = new JButton("<html><body>Registrieren</body></html>");
+  
+  JLabel lHeading     = new JLabel("<html><body><h1 style=\"color:white;font-size:3em;\">Anmeldung</h1></body></html>");
+  JLabel lFehler      = new JLabel();
+  
+  JTextField tName    = new JTextField();
+  JPasswordField  tPasswort= new JPasswordField ();
+  
+  Anmeldung(String title)
+  {
+    super(title);
+    
+    _gbc.gridx = 0;
+    _gbc.gridy = 0;
+    
+    pHeading.add(lHeading, _gbc);
+    
+    tName.setText("Benutzername");
+    tName.setFont(new Font("Serif",Font.BOLD,20));
+    tName.setForeground(Color.GRAY);
+    tName.addFocusListener(new FocusListener() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        if (tName.getText().equals("Benutzername")) {
+          tName.setText("");
+          tName.setForeground(Color.BLACK);
+        }
+      }
+      @Override
+      public void focusLost(FocusEvent e) {
+        if (tName.getText().isEmpty()) {
+          tName.setForeground(Color.GRAY);
+          tName.setText("Benutzername");
+        }
+      }
+    });
+    
+    tPasswort.addKeyListener(this);
+    tPasswort.setText("Passwort");
+    tPasswort.setFont(new Font("Serif",Font.BOLD,20));
+    if (tPasswort.getText().equals("Passwort")) {
+      tPasswort.setEchoChar((char) 0);
+    } 
+    tPasswort.setForeground(Color.GRAY);
+    tPasswort.addFocusListener(new FocusListener() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        if (tPasswort.getText().equals("Passwort")) {
+          tPasswort.setText("");
+          tPasswort.setForeground(Color.BLACK);
+          tPasswort.setEchoChar((char) 0);
+        } else {
+          tPasswort.setEchoChar('*');  
+        } // end of if-else
+      }
+      @Override
+      public void focusLost(FocusEvent e) {
+        if (tPasswort.getText().isEmpty()) {
+          tPasswort.setForeground(Color.GRAY);
+          tPasswort.setText("Passwort");
+          tPasswort.setEchoChar((char) 0);
+        } else {
+          tPasswort.setEchoChar('*');   
+        } // end of if-else
+      }
+    });
+    
+    pHintergrund.setLayout(new GridBagLayout());
+    
+    _gbc.gridy = 0;
+    
+    pHintergrund.add(pHeading, _gbc);
+    pHeading.setBackground(new Color(190,190,190));
+    
+    _gbc.gridy = 1;
+    
+    pFehler.setPreferredSize(new Dimension(400,75));
+    pHintergrund.add(pFehler, _gbc);
+    
+    pFehler.add(lFehler);
+    
+    pFehler.setBackground(new Color(190,190,190));
+    lFehler.setBackground(new Color(190,190,190));
+    
+    _gbc.gridy = 2;
+    
+    tName.setPreferredSize(new Dimension(200,30));
+    pHintergrund.add(tName, _gbc);
+    
+    _gbc.gridy = 3;
+    
+    tPasswort.setPreferredSize(new Dimension(200,30));
+    pHintergrund.add(tPasswort, _gbc);
+    
+    _gbc.gridy = 4;
+    
+    pButtons.add(bRegistrieren, _gbc);
+    
+    pButtons.add(bAnmelden);
+    pButtons.setPreferredSize(new Dimension(300,50));
+    pButtons.setBackground(new Color(190,190,190));
+    
+    bRegistrieren.setPreferredSize(new Dimension(100,25));
+    bAnmelden.setPreferredSize(new Dimension(100,25));
+    
+    pHintergrund.add(pButtons, _gbc);
+    
+    bRegistrieren.addActionListener(this);
+    bRegistrieren.setActionCommand("registrieren");
+    
+    bAnmelden.addActionListener(this);
+    bAnmelden.setActionCommand("anmelden");
+    
+    getContentPane().setBackground(new Color(169,169,169));
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+  
+  public void keyPressed(KeyEvent evt) {
+    tPasswort.setEchoChar('*');
+    File file = new File(".\\Datenbank\\" + tName.getText().trim() + ".txt");
+    String nHash = "";
+    Account acc = new Account();
+    if (file.exists()) {
+      BufferedReader reader = null;
+      try {
+        reader = new BufferedReader(new FileReader(file));
+        nHash = reader.readLine();
+        nHash = reader.readLine();
+        nHash = null;
+        nHash = reader.readLine();
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      } catch (IOException e) {
+        e.printStackTrace();
+      } 
+      try {
+        reader.close(); 
+      } catch(Exception e) {
+        System.out.println("Fehler");
+      } // end of try 
+      nHash = nHash.substring(6);       
+    } // end of if
+    
+    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+      if (file.exists() && (acc.hashen(tPasswort.getText().trim()).equals(nHash))) {
+        System.out.println("Angemeldet");
+      } else {
+        lFehler.setText("<html><body><h2 style=\"font-size:1.25em;color:red;\">Benutzername/Kennwort überprüfen</h2></body></html>");  
+      } // end of if-else
+    } // end of if
+  }
+  
+  public void keyReleased(KeyEvent e) {
+  }
+  
+  public void keyTyped(KeyEvent e)
+  {
+  }
+  
+  public void actionPerformed(ActionEvent evt)
+  {
+    if (evt.getActionCommand().equals("registrieren")) {
+      dispose();
+      try {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      } catch(Exception e) {
+        System.out.println("GUI Fehler");
+      }
+      Registrieren reg = new Registrieren("Registrieren");
+      reg.pack();
+      reg.setVisible(true);
+      reg.setResizable(false);
+      reg.setLocation(525,275);
+      reg.setSize(900,600);
+    } // end of if
+    if (evt.getActionCommand().equals("anmelden")) {
+      File file = new File(".\\Datenbank\\" + tName.getText().trim() + ".txt");
+      String nHash = "";
+      Account acc = new Account();
+      if (file.exists()) {
+        BufferedReader reader = null;
+        try {
+          reader = new BufferedReader(new FileReader(file));
+          nHash = reader.readLine();
+          nHash = reader.readLine();
+          nHash = null;
+          nHash = reader.readLine();
+        } catch (FileNotFoundException e) {
+          e.printStackTrace();
+        } catch (IOException e) {
+          e.printStackTrace();
+        } 
+        try {
+          reader.close(); 
+        } catch(Exception e) {
+          System.out.println("Fehler");
+        } // end of try 
+        nHash = nHash.substring(6);       
+      } // end of if      
+      if (file.exists() && (acc.hashen(tPasswort.getText().trim()).equals(nHash))) {
+        System.out.println("Angemeldet");
+      } else {
+        lFehler.setText("<html><body><h2 style=\"font-size:1.25em;color:red;\">Benutzername/Kennwort überprüfen</h2></body></html>");  
+      } // end of if-else     
+    } // end of if
+  }
+  
+  public static void main(String[] args)
+  {
+    try {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    } catch(Exception e) {
+      System.out.println("Fehler");
+    }
+    Anmeldung anmeldung = new Anmeldung("Anmeldung");
+    anmeldung.pack();
+    anmeldung.setVisible(true);
+    anmeldung.setResizable(false);
+    anmeldung.setLocation(525,275);
+    anmeldung.setSize(900,600);
+  }
+}
