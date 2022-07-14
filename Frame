@@ -1,0 +1,35 @@
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.awt.GridBagConstraints;
+import javax.swing.plaf.BorderUIResource;
+import javax.swing.BorderFactory;
+import java.awt.geom.Line2D;
+import javax.swing.JTextField;
+import java.awt.GridBagLayout;
+
+public class Frame extends JFrame
+{
+  JPanel pHintergrund = new JPanel();      
+  JPanel pHeading     = new JPanel();
+  GridBagConstraints _gbc;    
+  
+  Frame(String title)
+  {
+    setLayout(new GridBagLayout());
+    
+    pHintergrund.setBorder(BorderFactory.createLineBorder(Color.black));
+    _gbc = new GridBagConstraints();
+    _gbc.gridx = 0;
+    _gbc.gridy = 0;
+    
+    pHintergrund.setPreferredSize(new Dimension(600,400));
+    pHintergrund.setBackground(new Color(190,190,190));
+    add(pHintergrund, _gbc);
+    
+    pHintergrund.setLayout(new GridBagLayout());
+    
+    getContentPane().setBackground(new Color(169,169,169));
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+}
