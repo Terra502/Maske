@@ -1,0 +1,43 @@
+import java.io.*;
+
+public class Account
+{
+  public void accountAnlegen(String username, String email, String passwort)
+  {
+    String hash = hashen(passwort).trim();
+    
+    String fileName = ".\\Datenbank\\" + username + ".txt";
+    PrintWriter print = null;
+    
+    try {
+      print = new PrintWriter( new BufferedWriter( new FileWriter( fileName, true )));
+    } catch(IOException iox) {
+      System.out.println("Problem writing " + fileName);
+    } // end of tryPrintWriter print = null;
+    print.println("Username: " + username);
+    print.println("Email: " + email);
+    print.println("Hash: " + hash);
+    print.println("1");
+    print.println("0");
+    print.println("0");
+    print.close();
+    
+    print = null;
+    try {
+      print = new PrintWriter( new BufferedWriter( new FileWriter( ".\\Datenbank\\EMAIL.txt", true)));
+    } catch(IOException iox) {
+      System.out.println("Problem writing EMAIL.txt");
+    } 
+    print.println(email);
+    print.close();
+  }
+
+  public String hashen(String passwort)
+  {
+    int numberHash = 7;
+    for (int i = 0; i < passwort.length(); i++) {
+      numberHash = numberHash*7 + passwort.charAt(i);
+    }
+    return "" + numberHash;
+  }
+}
