@@ -1,0 +1,322 @@
+import java.awt.event.*;
+import java.awt.*;
+import java.awt.GridBagConstraints;
+import javax.swing.JTextField;
+import javax.swing.JPasswordField;
+import javax.swing.*;
+import javax.swing.JButton;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.io.*;
+
+public class Registrieren extends Frame implements KeyListener, ActionListener
+{
+  String username;
+  String email;
+  String passwort1;
+  String passwort2;
+  
+  JPanel pHeading      = new JPanel();
+  JPanel pFehler       = new JPanel();
+  
+  JLabel lFehler       = new JLabel();
+  JLabel lHeading      = new JLabel("<html><body><h1 style=\"font-size:3em;color:white\">Registrieren</h1></body></html>");
+  
+  JTextField tName     = new JTextField();
+  JTextField tEMail    = new JTextField();
+  JPasswordField pEins = new JPasswordField();
+  JPasswordField pZwei = new JPasswordField();
+  
+  JButton bEingabe     = new JButton("Bestätigen");
+  JButton bVerlassen   = new JButton("Verlassen");
+  
+  
+  Registrieren(String title)
+  {
+    super(title);
+    
+    _gbc.gridy = 0;
+    pHeading.add(lHeading, _gbc);
+    pHintergrund.add(pHeading);
+    
+    _gbc.gridy = 1;
+    pFehler.add(lFehler);
+    pHintergrund.add(pFehler, _gbc);
+    
+    _gbc.gridy = 2;
+    
+    pHintergrund.add(tName, _gbc);
+    tName.setPreferredSize(new Dimension(200,30));
+    _gbc.gridy = 3;
+    
+    pHintergrund.add(tEMail, _gbc);
+    tEMail.setPreferredSize(new Dimension(200,30));
+    
+    tName.setText("Benutzername");
+    tName.setFont(new Font("Serif",Font.BOLD,20));
+    tName.setForeground(Color.GRAY);
+    tName.addFocusListener(new FocusListener() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        if (tName.getText().equals("Benutzername")) {
+          tName.setText("");
+          tName.setForeground(Color.BLACK);
+        }
+      }
+      @Override
+      public void focusLost(FocusEvent e) {
+        if (tName.getText().isEmpty()) {
+          tName.setForeground(Color.GRAY);
+          tName.setText("Benutzername");
+        }
+      }
+    });
+    
+    tEMail.setText("E-Mail");
+    tEMail.setFont(new Font("Serif",Font.BOLD,20));
+    tEMail.setForeground(Color.GRAY);
+    tEMail.addFocusListener(new FocusListener() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        if (tEMail.getText().equals("E-Mail")) {
+          tEMail.setText("");
+          tEMail.setForeground(Color.BLACK);
+        }
+      }
+      @Override
+      public void focusLost(FocusEvent e) {
+        if (tEMail.getText().isEmpty()) {
+          tEMail.setForeground(Color.GRAY);
+          tEMail.setText("E-Mail");
+        }
+      }
+    });
+    
+    pEins.addKeyListener(this);
+    pEins.setText("Passwort");
+    pEins.setFont(new Font("Serif",Font.BOLD,20));
+    if (pEins.getText().equals("Passwort")) {
+      pEins.setEchoChar((char) 0);
+    } 
+    pEins.setForeground(Color.GRAY);
+    pEins.addFocusListener(new FocusListener() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        if (pEins.getText().equals("Passwort")) {
+          pEins.setText("");
+          pEins.setForeground(Color.BLACK);
+          pEins.setEchoChar((char) 0);
+        } else {
+          pEins.setEchoChar('*');  
+        } // end of if-else
+      }
+      @Override
+      public void focusLost(FocusEvent e) {
+        if (pEins.getText().isEmpty()) {
+          pEins.setForeground(Color.GRAY);
+          pEins.setText("Passwort");
+          pEins.setEchoChar((char) 0);
+        } else {
+          pEins.setEchoChar('*');   
+        } // end of if-else
+      }
+    });
+    
+    pZwei.addKeyListener(this);
+    pZwei.setText("Passwort wiederholen");
+    pZwei.setFont(new Font("Serif",Font.BOLD,20));
+    if (pZwei.getText().equals("Passwort wiederholen")) {
+      pZwei.setEchoChar((char) 0);
+    } 
+    pZwei.setForeground(Color.GRAY);
+    pZwei.addFocusListener(new FocusListener() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        if (pZwei.getText().equals("Passwort wiederholen")) {
+          pZwei.setText("");
+          pZwei.setForeground(Color.BLACK);
+          pZwei.setEchoChar((char) 0);
+        } else {
+          pZwei.setEchoChar('*');  
+        } // end of if-else
+      }
+      @Override
+      public void focusLost(FocusEvent e) {
+        if (pZwei.getText().isEmpty()) {
+          pZwei.setForeground(Color.GRAY);
+          pZwei.setText("Passwort wiederholen");
+          pZwei.setEchoChar((char) 0);
+        } else {
+          pZwei.setEchoChar('*');   
+        } // end of if-else
+      }
+    });
+    _gbc.gridy = 4;
+    pHintergrund.add(pEins, _gbc);
+    pEins.setPreferredSize(new Dimension(200,30));
+    _gbc.gridy = 5;
+    pHintergrund.add(pZwei, _gbc);
+    pZwei.setPreferredSize(new Dimension(200,30));
+    
+    _gbc.insets = new Insets(10,10,10,10);
+    
+    
+    _gbc.gridy = 6;
+    _gbc.gridx = 0;
+    _gbc.anchor = GridBagConstraints.LINE_START;
+    pHintergrund.add(bVerlassen, _gbc);
+    _gbc.anchor = GridBagConstraints.LINE_END;
+    pHintergrund.add(bEingabe, _gbc);
+    
+    
+    bVerlassen.setPreferredSize(new Dimension(100,25));
+    bEingabe.setPreferredSize(new Dimension(100,25));
+    
+    bVerlassen.addActionListener(this);
+    bVerlassen.setActionCommand("verlassen");
+    
+    bEingabe.addActionListener(this);
+    bEingabe.setActionCommand("eingabe");
+    
+    pFehler.setBackground(new Color(190,190,190));
+    lFehler.setBackground(new Color(190,190,190));
+    pHeading.setBackground(new Color(190,190,190));
+    lHeading.setBackground(new Color(190,190,190));             
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+  }
+  
+  public void actionPerformed(ActionEvent evt)
+  {
+    if (evt.getActionCommand().equals("verlassen")) {
+      dispose();
+      try {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+      } catch(Exception e) {
+        System.out.println("Fehler");
+      }
+      Anmeldung anmeldung = new Anmeldung("Anmeldung");
+      anmeldung.pack();
+      anmeldung.setVisible(true);
+      anmeldung.setResizable(false);
+      anmeldung.setLocation(525,275);
+      anmeldung.setSize(900,600);
+    } // end of if
+    if (evt.getActionCommand().equals("eingabe")) {
+      if (nameCheck() && emailCheck() && passwortCheck()) {
+        Account erstellen = new Account();
+        erstellen.accountAnlegen(username, email, passwort1);
+        dispose();
+        try {
+          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch(Exception e) {
+          System.out.println("Fehler");
+        }
+        Anmeldung anmeldung = new Anmeldung("Anmeldung");
+        anmeldung.pack();
+        anmeldung.setVisible(true);
+        anmeldung.setResizable(false);
+        anmeldung.setLocation(525,275);
+        anmeldung.setSize(900,600);
+      }
+    } // end of if
+  }
+  
+  public boolean nameCheck()
+  {
+    username = tName.getText().trim();
+    File file = new File(".\\Datenbank\\" + username +".txt");
+    if (username.length() > 25 || file.exists() ) {
+      lFehler.setText("<html><body><h2 style=\"font-size:1.25em;color:red;\">Name nicht verfügbar</h2></body></html>");  
+      return false;
+    } // end of if
+    return true;
+  }
+  
+  public boolean emailCheck()
+  {
+    email = tEMail.getText().trim();
+    
+    Pattern pattern = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+    Matcher matcher = pattern.matcher(email);
+    boolean matchFound = matcher.find();                
+    if (matchFound == false) {
+      lFehler.setText("<html><body><h2 style=\"font-size:1.25em;color:red;\">Email überprüfen</h2></body></html>");  
+      return false;
+    } // end of if
+    if (listenCheck(email)) {
+      lFehler.setText("<html><body><h2 style=\"font-size:1.23em;color:red;\">Email wird bereits genutzt</h2></body></html>");
+      return false;
+    } // end of if
+    return true;
+  }
+  
+  public boolean listenCheck(String mail)
+  {
+    File file = new File(".\\Datenbank\\EMAIL.txt");
+    BufferedReader reader = null;
+    String vMail = "";
+    try {
+      reader = new BufferedReader(new FileReader(file));
+      vMail = reader.readLine();
+      while (vMail != null) { 
+        if (vMail.equals(mail)) {
+          return true;
+        } // end of if
+        vMail = null;
+        vMail = reader.readLine();
+      } // end of while
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    } 
+    try {
+      reader.close(); 
+    } catch(Exception e) {
+      System.out.println("Fehler");
+    } // end of try 
+    return false;       
+  }
+  
+  public boolean passwortCheck()
+  {
+    passwort1 = pEins.getText().trim();
+    passwort2 = pZwei.getText().trim();
+    if (passwort1.equals(passwort2)) {
+      return true;
+    } // end of if
+    lFehler.setText("<html><body><h2 style=\"font-size:1.25em;color:red;\">Passwörter stimmen nicht überein</h2></body></html>");  
+    return false;
+  }
+  
+  public void keyPressed(KeyEvent evt) {
+    pEins.setEchoChar('*');
+    pZwei.setEchoChar('*');
+    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+      if (nameCheck() && emailCheck() && passwortCheck()) {
+        Account erstellen = new Account();
+        erstellen.accountAnlegen(username, email, passwort1);
+        dispose();
+        try {
+          UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch(Exception e) {
+          System.out.println("Fehler");
+        }
+        Anmeldung anmeldung = new Anmeldung("Anmeldung");
+        anmeldung.pack();
+        anmeldung.setVisible(true);
+        anmeldung.setResizable(false);
+        anmeldung.setLocation(525,275);
+        anmeldung.setSize(900,600);
+      }
+    } // end of if
+  }
+    
+  public void keyReleased(KeyEvent e) {
+  }
+    
+  public void keyTyped(KeyEvent e)
+  {
+  }
+}
